@@ -1,83 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Shop Locator Map</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop Locator</title>
+
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; }
-    #map { height: 100vh; width: 75%; float: right; }
-    #shopList { width: 25%; height: 100vh; overflow-y: scroll; padding: 10px; background: #f5f5f5; }
-    .shop-item { padding: 10px; border-bottom: 1px solid #ddd; cursor: pointer; }
-    .shop-item:hover { background: #e0e0e0; }
+    body, html {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 300px;
+      background-color: #f5f5f5;
+      padding: 1rem;
+      overflow-y: auto;
+      border-right: 1px solid #ccc;
+    }
+
+    #shopList button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 8px;
+      border: none;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #shopList button:hover {
+      background-color: #e6f7ff;
+    }
+
+    #map {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="sidebar" id="shopList">
+      <h3>📍 Shop List</h3>
+    </div>
+    <div id="map"></div>
+  </div>
 
-<div id="shopList"></div>
-<div id="map"></div>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-  // Dummy Shop Data
-  const shops = [
-    {
-      name: "Sri Ganesh Textiles",
-      lat: 10.356,
-      lng: 77.965,
-      address: "Main Bazaar, Dindigul",
-      phone: "9876543210"
-    },
-    {
-      name: "Anand Electronics",
-      lat: 10.358,
-      lng: 77.962,
-      address: "Market Road, Dindigul",
-      phone: "9876501234"
-    }
-  ];
+  <script>
+    const shops = [
+      { name: "CM Store", lat: 11.000075, long: 77.082653 },
+      { name: "Chithra Store", lat: 10.99446, long: 77.083507 },
+      { name: "Raja store", lat: 10.993932, long: 77.0964 },
+      { name: "Sivakumar store", lat: 11.228089, long: 77.120369 },
+      { name: "Simon Store", lat: 10.941023, long: 77.013012 },
+      { name: "Suresh Kumar maligai", lat: 10.670468, long: 77.073938 },
+      { name: "Selvakumar store", lat: 10.995596, long: 77.096687 },
+      { name: "David store", lat: 11.238993, long: 77.07791 },
+      { name: "Sri kamatchi amman store chettipalayam", lat: 10.915317, long: 77.038722 },
+      { name: "Devaraj Store", lat: 11.207376, long: 77.071996 },
+      { name: "Sakthi Store", lat: 10.99634, long: 77.100011 },
+      { name: "Malayandeswari tea stall Anuparpalayam", lat: 10.645272, long: 77.081548 },
+      { name: "Balaga Store Anuparpalayam", lat: 10.673748, long: 77.020407 },
+      { name: "Murugan Maligai Auparpalayam", lat: 10.597057, long: 77.11546 },
+      { name: "Surya Prabha store", lat: 10.999038, long: 76.941476 },
+      { name: "Msm Store", lat: 10.989096, long: 76.963959 },
+      { name: "Al Ameen store", lat: 10.981939, long: 76.963533 },
+    ];
 
-  // Initialize map
-  const map = L.map('map').setView([10.357, 77.963], 15);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data © OpenStreetMap contributors'
-  }).addTo(map);
+    const map = L.map('map').setView([11.000075, 77.082653], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+    }).addTo(map);
 
-  // Add markers
-  const markers = [];
-  shops.forEach((shop, index) => {
-    const marker = L.marker([shop.lat, shop.lng]).addTo(map);
-    marker.bindPopup(`<b>${shop.name}</b><br>${shop.address}<br>📞 ${shop.phone}`);
-    markers.push(marker);
-  });
+    const shopListDiv = document.getElementById('shopList');
 
-  // Display shop list
-  const listContainer = document.getElementById('shopList');
-  shops.forEach((shop, index) => {
-    const item = document.createElement('div');
-    item.className = 'shop-item';
-    item.textContent = shop.name;
-    item.onclick = () => {
-      map.setView([shop.lat, shop.lng], 16);
-      markers[index].openPopup();
-    };
-    listContainer.appendChild(item);
-  });
-
-  // Get current location and mark
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const { latitude, longitude } = pos.coords;
-      L.marker([latitude, longitude], {
-        title: "You are here",
-        icon: L.icon({
-          iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-          iconSize: [25, 25],
-        })
-      }).addTo(map).bindPopup("You are here").openPopup();
+    shops.forEach(shop => {
+      const btn = document.createElement('button');
+      btn.innerText = shop.name;
+      btn.onclick = () => {
+        map.setView([shop.lat, shop.long], 15);
+        L.popup()
+          .setLatLng([shop.lat, shop.long])
+          .setContent(`<strong>${shop.name}</strong><br>Lat: ${shop.lat}<br>Long: ${shop.long}`)
+          .openOn(map);
+      };
+      shopListDiv.appendChild(btn);
     });
-  }
-</script>
-
+  </script>
 </body>
 </html>
