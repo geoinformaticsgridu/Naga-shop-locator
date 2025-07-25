@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shop Locator Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; }
+    #map { height: 100vh; width: 75%; float: right; }
+    #shopList { width: 25%; height: 100vh; overflow-y: scroll; padding: 10px; background: #f5f5f5; }
+    .shop-item { padding: 10px; border-bottom: 1px solid #ddd; cursor: pointer; }
+    .shop-item:hover { background: #e0e0e0; }
+  </style>
+</head>
+<body>
+
+<div id="shopList"></div>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  // Dummy Shop Data
+  const shops = [
+    {
+      name: "Sri Ganesh Textiles",
+      lat: 10.356,
+      lng: 77.965,
+      address: "Main Bazaar, Dindigul",
+      phone: "9876543210"
+    },
+    {
+      name: "Anand Electronics",
+      lat: 10.358,
+      lng: 77.962,
+      address: "Market Road, Dindigul",
+      phone: "9876501234"
+    }
+  ];
+
+  // Initialize map
+  const map = L.map('map').setView([10.357, 77.963], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Add markers
+  const markers = [];
+  shops.forEach((shop, index) => {
+    const marker = L.marker([shop.lat, shop.lng]).addTo(map);
+    marker.bindPopup(`<b>${shop.name}</b><br>${shop.address}<br>📞 ${shop.phone}`);
+    markers.push(marker);
+  });
+
+  // Display shop list
+  const listContainer = document.getElementById('shopList');
+  shops.forEach((shop, index) => {
+    const item = document.createElement('div');
+    item.className = 'shop-item';
+    item.textContent = shop.name;
+    item.onclick = () => {
+      map.setView([shop.lat, shop.lng], 16);
+      markers[index].openPopup();
+    };
+    listContainer.appendChild(item);
+  });
+
+  // Get current location and mark
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      L.marker([latitude, longitude], {
+        title: "You are here",
+        icon: L.icon({
+          iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+          iconSize: [25, 25],
+        })
+      }).addTo(map).bindPopup("You are here").openPopup();
+    });
+  }
+</script>
+
+</body>
+</html>
