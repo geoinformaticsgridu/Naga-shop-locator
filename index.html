@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shop Locator</title>
+  <title>Responsive Shop Locator</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -15,9 +15,17 @@
       font-family: Arial, sans-serif;
     }
 
+    header {
+      background-color: #00796b;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
     .container {
       display: flex;
-      height: 100vh;
+      flex-direction: row;
+      height: calc(100vh - 50px); /* subtract header height */
     }
 
     .sidebar {
@@ -48,12 +56,34 @@
     #map {
       flex: 1;
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+
+      #map {
+        height: calc(100vh - 250px); /* header + sidebar */
+      }
+    }
   </style>
 </head>
 <body>
+  <header>
+    <h2>📍 Responsive Shop Locator</h2>
+  </header>
+
   <div class="container">
     <div class="sidebar" id="shopList">
-      <h3>📍 Shop List</h3>
+      <h3>🛒 Shop List</h3>
     </div>
     <div id="map"></div>
   </div>
@@ -79,12 +109,13 @@
       { name: "Murugan Maligai Auparpalayam", lat: 10.597057, long: 77.11546 },
       { name: "Surya Prabha store", lat: 10.999038, long: 76.941476 },
       { name: "Msm Store", lat: 10.989096, long: 76.963959 },
-      { name: "Al Ameen store", lat: 10.981939, long: 76.963533 },
+      { name: "Al Ameen store", lat: 10.981939, long: 76.963533 }
     ];
 
     const map = L.map('map').setView([11.000075, 77.082653], 10);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     const shopListDiv = document.getElementById('shopList');
