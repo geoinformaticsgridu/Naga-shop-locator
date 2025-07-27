@@ -1,2 +1,2 @@
-# Anil-shop-locator
+# Naga-shop-locator
 Shop Details
